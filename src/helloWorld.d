@@ -1,6 +1,6 @@
 import Vulkan;
 
-//pragma(lib, "lib32/vulkan-1.lib");
+pragma(lib, "vulkan-1.lib");
 
 void main()
 {
