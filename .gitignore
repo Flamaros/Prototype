@@ -1,5 +1,7 @@
 .dub
+bin
 dub.selections.json
 *.visualdproj
 *.sln
 *.pdb
+*.suo
