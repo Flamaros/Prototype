@@ -1,6 +1,7 @@
 import Vulkan;
 
-pragma(lib, "vulkan-1.lib");
+//pragma(lib, "vulkan-1.lib");
+//	"sourceFiles-windows-x86": ["lib32/vulkan-1.lib"],
 
 void main()
 {
