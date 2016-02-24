@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2015-2016 The Khronos Group Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -47,7 +47,11 @@ private template VK_DEFINE_HANDLE(string name) {
 }
 
 private template VK_DEFINE_NON_DISPATCHABLE_HANDLE(string name) {
-    enum VK_DEFINE_NON_DISPATCHABLE_HANDLE = "struct " ~ name ~ "_T; alias " ~ name ~ " = " ~ name ~ "_T*;";
+    version (D_LP64) {
+        enum VK_DEFINE_NON_DISPATCHABLE_HANDLE = "struct " ~ name ~ "_T; alias " ~ name ~ " = " ~ name ~ "_T*;";
+    } else {
+        enum VK_DEFINE_NON_DISPATCHABLE_HANDLE = "alias " ~ name ~ " = ulong;";
+    }
 }
 
 mixin(VK_DEFINE_HANDLE!"VkInstance");
