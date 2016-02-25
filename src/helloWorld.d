@@ -1,11 +1,151 @@
 import Vulkan;
+import core.sys.windows.windows;
 
 //pragma(lib, "vulkan-1.lib");
 //	"sourceFiles-windows-x86": ["lib32/vulkan-1.lib"],
 
 void main()
 {
+//	setupWindow(0, WndProc);
 }
+/+
+HWND setupWindow(HINSTANCE hinstance, WNDPROC wndproc)
+{
+	windowInstance = hinstance;
+
+	bool fullscreen = false;
+
+	// Check command line arguments
+/*	for (int32_t i = 0; i < __argc; i++)
+	{
+		if (__argv[i] == std::string("-fullscreen"))
+		{
+			fullscreen = true;
+		}
+	}*/
+
+	WNDCLASSEX wndClass;
+
+	wndClass.cbSize = sizeof(WNDCLASSEX);
+	wndClass.style = CS_HREDRAW | CS_VREDRAW;
+	wndClass.lpfnWndProc = wndproc;
+	wndClass.cbClsExtra = 0;
+	wndClass.cbWndExtra = 0;
+	wndClass.hInstance = hinstance;
+	wndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndClass.hbrBackground = cast(HBRUSH)GetStockObject(WHITE_BRUSH);
+	wndClass.lpszMenuName = NULL;
+	wndClass.lpszClassName = name.c_str();
+	wndClass.hIconSm = LoadIcon(NULL, IDI_WINLOGO);
+
+	if (!RegisterClassEx(&wndClass))
+	{
+/*	std::cout << "Could not register window class!\n";
+		fflush(stdout);
+*/		exit(1);
+	}
+
+	int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+	if (fullscreen)
+	{
+		DEVMODE dmScreenSettings;
+		memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
+		dmScreenSettings.dmSize = sizeof(dmScreenSettings);
+		dmScreenSettings.dmPelsWidth = screenWidth;
+		dmScreenSettings.dmPelsHeight = screenHeight;
+		dmScreenSettings.dmBitsPerPel = 32;
+		dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+
+		if ((width != screenWidth) && (height != screenHeight))
+		{
+			if (ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+			{
+				if (MessageBox(NULL, "Fullscreen Mode not supported!\n Switch to window mode?", "Error", MB_YESNO | MB_ICONEXCLAMATION) == IDYES)
+				{
+					fullscreen = FALSE;
+				}
+				else
+				{
+					return FALSE;
+				}
+			}
+		}
+
+	}
+
+	DWORD dwExStyle;
+	DWORD dwStyle;
+
+	if (fullscreen)
+	{
+		dwExStyle = WS_EX_APPWINDOW;
+		dwStyle = WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+	}
+	else
+	{
+		dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+		dwStyle = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+	}
+
+	RECT windowRect;
+	if (fullscreen)
+	{
+		windowRect.left = cast(long)0;
+		windowRect.right = cast(long)screenWidth;
+		windowRect.top = cast(long)0;
+		windowRect.bottom = cast(long)screenHeight;
+	}
+	else
+	{
+		windowRect.left = cast(long)screenWidth / 2 - width / 2;
+		windowRect.right = cast(long)width;
+		windowRect.top = cast(long)screenHeight / 2 - height / 2;
+		windowRect.bottom = cast(long)height;
+	}
+
+	AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
+
+	window = CreateWindowEx(0,
+							name.c_str(),
+							title.c_str(),
+							//		WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_SYSMENU,
+							dwStyle | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+							windowRect.left,
+							windowRect.top,
+							windowRect.right,
+							windowRect.bottom,
+							NULL,
+							NULL,
+							hinstance,
+							NULL);
+
+	if (!window) 
+	{
+/*		printf("Could not create window!\n");
+		fflush(stdout);*/
+		return 0;
+		exit(1);
+	}
+
+	ShowWindow(window, SW_SHOW);
+	SetForegroundWindow(window);
+	SetFocus(window);
+
+	return window;
+}
+
+LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	if (vulkanExample != NULL)
+	{
+		vulkanExample->handleMessages(hWnd, uMsg, wParam, lParam);
+	}
+	return (DefWindowProc(hWnd, uMsg, wParam, lParam));
+}
++/
 
 /*
 const int	VERTEX_BUFFER_BIND_ID = 0;
