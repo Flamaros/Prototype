@@ -1,151 +1,189 @@
 import Vulkan;
-import core.sys.windows.windows;
+import std.string;
 
 //pragma(lib, "vulkan-1.lib");
 //	"sourceFiles-windows-x86": ["lib32/vulkan-1.lib"],
 
-void main()
-{
-//	setupWindow(0, WndProc);
-}
-/+
-HWND setupWindow(HINSTANCE hinstance, WNDPROC wndproc)
-{
-	windowInstance = hinstance;
+// https://github.com/WebFreak001/DWinProgramming/blob/master/Samples/Chap03/HelloWin/HelloWin.d
 
-	bool fullscreen = false;
+string name = "Hello World";
+string title = "Title";
+int width = 640;
+int height = 480;
 
-	// Check command line arguments
-/*	for (int32_t i = 0; i < __argc; i++)
+version(Windows)
+{
+	import std.utf;
+	import core.stdc.string;
+	import core.sys.windows.windows;
+
+	extern (Windows)
+	int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 	{
+		import core.runtime;
+
+		int result;
+
+		try
+		{
+			Runtime.initialize();
+			result = myWinMain(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+			Runtime.terminate();
+		}
+		catch (Throwable o) 
+		{
+			MessageBox(null, o.toString().toUTF16z, "Error", MB_OK | MB_ICONEXCLAMATION);
+			result = 0;
+		}
+
+		return result;
+	}
+
+	int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+	{
+		setupWindow(hInstance, &WndProc);
+		return 0;
+	}
+
+	HWND setupWindow(HINSTANCE hinstance, WNDPROC wndproc)
+	{
+//		windowInstance = hinstance;
+
+		bool fullscreen = false;
+
+		// Check command line arguments
+		/*	for (int32_t i = 0; i < __argc; i++)
+		{
 		if (__argv[i] == std::string("-fullscreen"))
 		{
-			fullscreen = true;
+		fullscreen = true;
 		}
-	}*/
+		}*/
 
-	WNDCLASSEX wndClass;
+		WNDCLASSEX wndClass;
 
-	wndClass.cbSize = sizeof(WNDCLASSEX);
-	wndClass.style = CS_HREDRAW | CS_VREDRAW;
-	wndClass.lpfnWndProc = wndproc;
-	wndClass.cbClsExtra = 0;
-	wndClass.cbWndExtra = 0;
-	wndClass.hInstance = hinstance;
-	wndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-	wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wndClass.hbrBackground = cast(HBRUSH)GetStockObject(WHITE_BRUSH);
-	wndClass.lpszMenuName = NULL;
-	wndClass.lpszClassName = name.c_str();
-	wndClass.hIconSm = LoadIcon(NULL, IDI_WINLOGO);
+		wndClass.cbSize = WNDCLASSEX.sizeof;
+		wndClass.style = CS_HREDRAW | CS_VREDRAW;
+		wndClass.lpfnWndProc = wndproc;
+		wndClass.cbClsExtra = 0;
+		wndClass.cbWndExtra = 0;
+		wndClass.hInstance = hinstance;
+		wndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+		wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+		wndClass.hbrBackground = cast(HBRUSH)GetStockObject(WHITE_BRUSH);
+		wndClass.lpszMenuName = NULL;
+		wndClass.lpszClassName = name.toUTF16z;
+		wndClass.hIconSm = LoadIcon(NULL, IDI_WINLOGO);
 
-	if (!RegisterClassEx(&wndClass))
-	{
-/*	std::cout << "Could not register window class!\n";
-		fflush(stdout);
-*/		exit(1);
-	}
-
-	int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-
-	if (fullscreen)
-	{
-		DEVMODE dmScreenSettings;
-		memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
-		dmScreenSettings.dmSize = sizeof(dmScreenSettings);
-		dmScreenSettings.dmPelsWidth = screenWidth;
-		dmScreenSettings.dmPelsHeight = screenHeight;
-		dmScreenSettings.dmBitsPerPel = 32;
-		dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
-
-		if ((width != screenWidth) && (height != screenHeight))
+		if (!RegisterClassEx(&wndClass))
 		{
-			if (ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+			MessageBox(NULL, "This program requires Windows NT!", name.toUTF16z, MB_ICONERROR);
+			return null;
+		}
+
+		int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+		int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+		if (fullscreen)
+		{
+			DEVMODE dmScreenSettings;
+			memset(&dmScreenSettings, 0, dmScreenSettings.sizeof);
+			dmScreenSettings.dmSize = dmScreenSettings.sizeof;
+			dmScreenSettings.dmPelsWidth = screenWidth;
+			dmScreenSettings.dmPelsHeight = screenHeight;
+			dmScreenSettings.dmBitsPerPel = 32;
+			dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+
+			if ((width != screenWidth) && (height != screenHeight))
 			{
-				if (MessageBox(NULL, "Fullscreen Mode not supported!\n Switch to window mode?", "Error", MB_YESNO | MB_ICONEXCLAMATION) == IDYES)
+				if (ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
 				{
-					fullscreen = FALSE;
-				}
-				else
-				{
-					return FALSE;
+					if (MessageBox(NULL, "Fullscreen Mode not supported!\n Switch to window mode?", "Error", MB_YESNO | MB_ICONEXCLAMATION) == IDYES)
+						fullscreen = FALSE;
+					else
+						return null;
 				}
 			}
+
 		}
 
+		DWORD dwExStyle;
+		DWORD dwStyle;
+
+		if (fullscreen)
+		{
+			dwExStyle = WS_EX_APPWINDOW;
+			dwStyle = WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+		}
+		else
+		{
+			dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+			dwStyle = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+		}
+
+		RECT windowRect;
+		if (fullscreen)
+		{
+			windowRect.left = cast(long)0;
+			windowRect.right = cast(long)screenWidth;
+			windowRect.top = cast(long)0;
+			windowRect.bottom = cast(long)screenHeight;
+		}
+		else
+		{
+			windowRect.left = cast(long)screenWidth / 2 - width / 2;
+			windowRect.right = cast(long)width;
+			windowRect.top = cast(long)screenHeight / 2 - height / 2;
+			windowRect.bottom = cast(long)height;
+		}
+
+		AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
+
+		auto window = CreateWindowEx(0,
+								name.toUTF16z,
+								title.toUTF16z,
+								//		WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_SYSMENU,
+								dwStyle | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+								windowRect.left,
+								windowRect.top,
+								windowRect.right,
+								windowRect.bottom,
+								NULL,
+								NULL,
+								hinstance,
+								NULL);
+
+		if (!window) 
+		{
+			MessageBox(NULL, "Could not create window", name.toUTF16z, MB_ICONERROR);
+			return null;
+		}
+
+		ShowWindow(window, SW_SHOW);
+		SetForegroundWindow(window);
+		SetFocus(window);
+
+		return window;
 	}
 
-	DWORD dwExStyle;
-	DWORD dwStyle;
-
-	if (fullscreen)
+	extern (Windows)
+	LRESULT WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) nothrow
 	{
-		dwExStyle = WS_EX_APPWINDOW;
-		dwStyle = WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+//		if (vulkanExample != NULL)
+		{
+//			handleMessages(hWnd, uMsg, wParam, lParam);
+		}
+		return (DefWindowProc(hWnd, uMsg, wParam, lParam));
 	}
-	else
-	{
-		dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
-		dwStyle = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
-	}
-
-	RECT windowRect;
-	if (fullscreen)
-	{
-		windowRect.left = cast(long)0;
-		windowRect.right = cast(long)screenWidth;
-		windowRect.top = cast(long)0;
-		windowRect.bottom = cast(long)screenHeight;
-	}
-	else
-	{
-		windowRect.left = cast(long)screenWidth / 2 - width / 2;
-		windowRect.right = cast(long)width;
-		windowRect.top = cast(long)screenHeight / 2 - height / 2;
-		windowRect.bottom = cast(long)height;
-	}
-
-	AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
-
-	window = CreateWindowEx(0,
-							name.c_str(),
-							title.c_str(),
-							//		WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_SYSMENU,
-							dwStyle | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-							windowRect.left,
-							windowRect.top,
-							windowRect.right,
-							windowRect.bottom,
-							NULL,
-							NULL,
-							hinstance,
-							NULL);
-
-	if (!window) 
-	{
-/*		printf("Could not create window!\n");
-		fflush(stdout);*/
-		return 0;
-		exit(1);
-	}
-
-	ShowWindow(window, SW_SHOW);
-	SetForegroundWindow(window);
-	SetFocus(window);
-
-	return window;
 }
-
-LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+else
 {
-	if (vulkanExample != NULL)
+	void main()
 	{
-		vulkanExample->handleMessages(hWnd, uMsg, wParam, lParam);
+	//	setupWindow(0, WndProc);
 	}
-	return (DefWindowProc(hWnd, uMsg, wParam, lParam));
 }
-+/
+
 
 /*
 const int	VERTEX_BUFFER_BIND_ID = 0;
