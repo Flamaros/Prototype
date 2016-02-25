@@ -4,7 +4,7 @@ import std.string;
 // https://github.com/WebFreak001/DWinProgramming/blob/master/Samples/Chap03/HelloWin/HelloWin.d
 
 string name = "Hello World";
-string title = "Title";
+string title = "Hello World";
 int width = 640;
 int height = 480;
 
@@ -177,13 +177,33 @@ version(Windows)
 	}
 
 	extern (Windows)
-	LRESULT WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) nothrow
+	LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 	{
-//		if (vulkanExample != NULL)
+		HDC			hdc;
+		PAINTSTRUCT ps;
+		RECT		rect;
+
+		switch (message)
 		{
-//			handleMessages(hWnd, uMsg, wParam, lParam);
+			case WM_CREATE:
+				return 0;
+
+			case WM_PAINT:
+/*				hdc = BeginPaint(hwnd, &ps);
+				scope(exit) EndPaint(hwnd, &ps);
+
+				GetClientRect(hwnd, &rect);
+				DrawText(hdc, "Hello, Windows!", -1, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+*/				return 0;
+
+			case WM_DESTROY:
+				PostQuitMessage(0);
+				return 0;
+
+			default:
 		}
-		return (DefWindowProc(hWnd, uMsg, wParam, lParam));
+
+		return DefWindowProc(hwnd, message, wParam, lParam);
 	}
 }
 else
