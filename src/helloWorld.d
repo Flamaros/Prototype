@@ -1,9 +1,6 @@
 import Vulkan;
 import std.string;
 
-//pragma(lib, "vulkan-1.lib");
-//	"sourceFiles-windows-x86": ["lib32/vulkan-1.lib"],
-
 // https://github.com/WebFreak001/DWinProgramming/blob/master/Samples/Chap03/HelloWin/HelloWin.d
 
 string name = "Hello World";
@@ -13,6 +10,9 @@ int height = 480;
 
 version(Windows)
 {
+	//pragma(lib, "vulkan-1.lib");
+	pragma(lib, "gdi32.lib");
+
 	import std.utf;
 	import core.stdc.string;
 	import core.sys.windows.windows;
@@ -42,7 +42,16 @@ version(Windows)
 	int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 	{
 		setupWindow(hInstance, &WndProc);
-		return 0;
+
+		MSG  msg;
+
+		while (GetMessage(&msg, NULL, 0, 0))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+
+		return msg.wParam;
 	}
 
 	HWND setupWindow(HINSTANCE hinstance, WNDPROC wndproc)
@@ -139,7 +148,7 @@ version(Windows)
 
 		AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
 
-		auto window = CreateWindowEx(0,
+		auto hwnd = CreateWindowEx(0,
 								name.toUTF16z,
 								title.toUTF16z,
 								//		WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_SYSMENU,
@@ -153,17 +162,18 @@ version(Windows)
 								hinstance,
 								NULL);
 
-		if (!window) 
+		if (!hwnd) 
 		{
 			MessageBox(NULL, "Could not create window", name.toUTF16z, MB_ICONERROR);
 			return null;
 		}
 
-		ShowWindow(window, SW_SHOW);
-		SetForegroundWindow(window);
-		SetFocus(window);
+		ShowWindow(hwnd, SW_SHOW);
+		UpdateWindow(hwnd);
+//		SetForegroundWindow(hwnd);
+//		SetFocus(hwnd);
 
-		return window;
+		return hwnd;
 	}
 
 	extern (Windows)
