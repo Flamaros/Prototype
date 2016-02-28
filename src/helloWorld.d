@@ -1,5 +1,9 @@
+module helloWorld;
+
 import Vulkan;
+
 import std.string;
+
 
 // https://github.com/WebFreak001/DWinProgramming/blob/master/Samples/Chap03/HelloWin/HelloWin.d
 
@@ -41,7 +45,11 @@ version(Windows)
 
 	int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 	{
-		setupWindow(hInstance, &WndProc);
+		HWND	window = setupWindow(hInstance, &WndProc);
+
+		initSwapchain(hInstance, window);
+//		prepare();
+//		vulkanExample->renderLoop();
 
 		MSG  msg;
 
@@ -210,8 +218,116 @@ else
 {
 	void main()
 	{
+		setupWindow();
+		initSwapchain();
 	//	setupWindow(0, WndProc);
 	}
+}
+
+void initSwapchain(HINSTANCE platformHandle, HWND platformWindow)
+{
+/+	VkResult err;
+
+	version(Windows)
+	{
+		VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = {};
+		surfaceCreateInfo.sType = VkStructureType.VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+		surfaceCreateInfo.hinstance = platformHandle;
+		surfaceCreateInfo.hwnd = platformWindow;
+		err = vkCreateWin32SurfaceKHR(instance, &surfaceCreateInfo, nullptr, &surface);
+	}
+
+	// Get available queue family properties
+	uint32_t queueCount;
+	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueCount, NULL);
+	assert(queueCount >= 1);
+
+	VkQueueFamilyProperties[] queueProps(queueCount);
+	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueCount, queueProps.data());
+
+	// Iterate over each queue to learn whether it supports presenting:
+	// Find a queue with present support
+	// Will be used to present the swap chain images to the windowing system
+	VkBool32[] supportsPresent(queueCount);
+	for (uint32_t i = 0; i < queueCount; i++) 
+	{
+		fpGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &supportsPresent[i]);
+	}
+
+	// Search for a graphics and a present queue in the array of queue
+	// families, try to find one that supports both
+	uint32_t graphicsQueueNodeIndex = UINT32_MAX;
+	uint32_t presentQueueNodeIndex = UINT32_MAX;
+	for (uint32_t i = 0; i < queueCount; i++) 
+	{
+		if ((queueProps[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0) 
+		{
+			if (graphicsQueueNodeIndex == UINT32_MAX) 
+			{
+				graphicsQueueNodeIndex = i;
+			}
+
+			if (supportsPresent[i] == VK_TRUE) 
+			{
+				graphicsQueueNodeIndex = i;
+				presentQueueNodeIndex = i;
+				break;
+			}
+		}
+	}
+	if (presentQueueNodeIndex == UINT32_MAX) 
+	{	
+		// If there's no queue that supports both present and graphics
+		// try to find a separate present queue
+		for (uint32_t i = 0; i < queueCount; ++i) 
+		{
+			if (supportsPresent[i] == VK_TRUE) 
+			{
+				presentQueueNodeIndex = i;
+				break;
+			}
+		}
+	}
+
+	// Exit if either a graphics or a presenting queue hasn't been found
+	if (graphicsQueueNodeIndex == UINT32_MAX || presentQueueNodeIndex == UINT32_MAX) 
+	{
+		vkTools.exitFatal("Could not find a graphics and/or presenting queue!", "Fatal error");
+	}
+
+	// todo : Add support for separate graphics and presenting queue
+	if (graphicsQueueNodeIndex != presentQueueNodeIndex) 
+	{
+		vkTools.exitFatal("Separate graphics and presenting queues are not supported yet!", "Fatal error");
+	}
+
+	queueNodeIndex = graphicsQueueNodeIndex;
+
+	// Get list of supported surface formats
+	uint32_t formatCount;
+	err = fpGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &formatCount, NULL);
+	assert(!err);
+	assert(formatCount > 0);
+
+	VkSurfaceFormatKHR[] surfaceFormats(formatCount);
+	err = fpGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &formatCount, surfaceFormats.data());
+	assert(!err);
+
+	// If the surface format list only includes one entry with VK_FORMAT_UNDEFINED,
+	// there is no preferered format, so we assume VK_FORMAT_B8G8R8A8_UNORM
+	if ((formatCount == 1) && (surfaceFormats[0].format == VK_FORMAT_UNDEFINED))
+	{
+		colorFormat = VK_FORMAT_B8G8R8A8_UNORM;
+	}
+	else
+	{
+		// Always select the first available color format
+		// If you need a specific format (e.g. SRGB) you'd need to
+		// iterate over the list of available surface format and
+		// check for it's presence
+		colorFormat = surfaceFormats[0].format;
+	}
+	colorSpace = surfaceFormats[0].colorSpace;+/
 }
 
 
