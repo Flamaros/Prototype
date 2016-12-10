@@ -13,7 +13,8 @@ targetPath "bin"
 
 sourcePaths "src"
 
-dependency "gl3n" version="~>1.3.1"
-dependency "derelict-glfw3" version="~>4.0.0-alpha.3"
+dependency "gl3n"			version="~>1.3.1"
+dependency "derelict-glfw3" version="~>3.1.1"	// 4.0.0 actually in alpha
+dependency "derelict-gl3"	version="~>1.0.19"	// 2.0.0 actually in alpha
 
 //subConfiguration "derelict-glfw3" "derelict-glfw3-static"
