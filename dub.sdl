@@ -7,8 +7,13 @@ targetType "executable"
 targetName "Prototype"
 targetPath "bin"
 
-dflags "-L/subsystem:windows"  platform="windows"
+//dflags "-L/subsystem:windows"  platform="windows"	// Uncomment to remove the console
+
+//sourceFiles "lib/glfw3.lib" platform="windows"
 
 sourcePaths "src"
 
 dependency "gl3n" version="~>1.3.1"
+dependency "derelict-glfw3" version="~>4.0.0-alpha.3"
+
+//subConfiguration "derelict-glfw3" "derelict-glfw3-static"
