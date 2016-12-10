@@ -1,9 +1,6 @@
-# SwagEngine
+# Prototype
 
-A 3D engine written in D with the Vulkan API.
-At the moment it's just a sand box to learn Vulkan API, so don't expect anything from this project.
+A small project to make some tests in the 3D domain with OpenGL and maybe Vulkan.
+For the moment there is no particular goal to reach here.
 
-Inspiration samples:
-https://github.com/SaschaWillems/Vulkan
-
-		"derelict-vulkan": ">=0.0.1",
+The code is written in D language.
