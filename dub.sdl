@@ -7,7 +7,7 @@ targetType "executable"
 targetName "Prototype"
 targetPath "bin"
 
-//dflags "-L/subsystem:windows"  platform="windows"	// Uncomment to remove the console
+dflags "-L/subsystem:windows"  platform="windows"	// Uncomment to remove the console
 
 //sourceFiles "lib/glfw3.lib" platform="windows"
 

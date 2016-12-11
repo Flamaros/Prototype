@@ -6,6 +6,8 @@ import derelict.glfw3.glfw3;
 
 import derelict.opengl3.gl3;
 
+import platform.windows;
+
 version (Windows)
 {
 	string glfw3LibPath = "lib/glfw3.dll";
@@ -42,6 +44,7 @@ void main()
 
 	DerelictGL3.reload();
 
+	glfwSwapInterval(0);	// Disable the vsync
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
