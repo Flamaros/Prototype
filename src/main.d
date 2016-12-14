@@ -1,29 +1,21 @@
-import std.stdio;
+import platform.windows;
+
+import renderer.opengl.backend;
 
 import derelict.glfw3.glfw3;
 //import core.sys.windows.windows : HWND, HGLRC;
 //mixin DerelictGLFW3_WindowsBind;
 
-import derelict.opengl3.gl3;
-
-import platform.windows;
-
-version (Windows)
-{
-	string glfw3LibPath = "lib/glfw3.dll";
-}
-else
-{
-	static assert(false); 
-}
+import std.stdio;
+import std.experimental.logger;
 
 void main()
 {
+	version(release) globalLogLevel = LogLevel.trace;
+
 //	DerelictGLFW3.load(SharedLibVersion(3, 2, 1));
 	DerelictGLFW3.load(glfw3LibPath);
 //	DerelictGLFW3_loadWindows();
-
-	DerelictGL3.load();
 
 	GLFWwindow*	window;
 
@@ -42,14 +34,14 @@ void main()
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
-	DerelictGL3.reload();
-
 	glfwSwapInterval(0);	// Disable the vsync
+
+	backend.initialize();
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-        /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
+		backend.draw();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
