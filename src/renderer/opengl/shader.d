@@ -43,16 +43,13 @@ struct Shader
 			GLint logLength;
 			checkgl!glGetShaderiv(mId, GL_INFO_LOG_LENGTH, &logLength);
 
+			ubyte[]	log;
 			if (logLength > 0)
 			{
-				ubyte[]	log;
-
 				log.length = logLength;
 				checkgl!glGetShaderInfoLog(mId, logLength, &logLength, cast(GLchar*)log.ptr);
-
-				critical(cast(string)log);
 			}
-			criticalf("Failed to compile shader: %s", mFilePath);
+			criticalf("Failed to compile shader: %s\n%s", mFilePath, cast(string)log);
 		}
 	}
 
@@ -86,6 +83,8 @@ struct ShaderProgram
 		checkgl!glGetProgramiv(mProgram, GL_LINK_STATUS, &status);
 		if (status == GL_FALSE)
 		{
+			GLchar[]	log;
+
 			debug	// Retrieve the log
 			{
 				//checkgl!glValidateProgram(mShaderProgram);
@@ -93,14 +92,11 @@ struct ShaderProgram
 				checkgl!glGetProgramiv(mProgram, GL_INFO_LOG_LENGTH, &logLength);
 				if (logLength > 0)
 				{
-					GLchar[]	log = new char[](logLength);
-
+					log.length = logLength;
 					glGetProgramInfoLog(mProgram, logLength, &logLength, log.ptr);
-					if (logLength > 0)	// It seems GL_INFO_LOG_LENGTH can return 1 instead of 0
-						critical("Shader log :\n" ~ log);
 				}
 			}
-			critical("Failed to link program");
+			criticalf("Failed to link program\n%s", log);
 		}
 	}
 
