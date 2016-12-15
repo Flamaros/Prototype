@@ -1,5 +1,8 @@
  - Migrate the checkgl util method on the expirimental logger of std
  - Improve parameter value format of checkgl (pointer in hex, enum too, ...)
+ - Retrieve uniforms locations and types of Shaders
+ - Generate hash of shader for a fast sort of materials (depending of the shader source and uniforms)
+ - Save compiled shader for faster loadings (store the version driver and GPU ref to invalidate cache,...)
 
 Optimization:
  - The instancing as to be dynamic just like the batching, because it depends of draw orders (object rendering groups, and sort for alpha objects,...). It will be nice to have a method handler that allow the user to customize this filtering.
