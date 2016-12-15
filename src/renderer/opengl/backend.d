@@ -20,7 +20,7 @@ struct Backend
 		infof("OpenGL Vendor: \"%s\"", fromStringz(glGetString(GL_VENDOR)));
 		infof("OpenGL Renderer: \"%s\"", fromStringz(glGetString(GL_RENDERER)));
 		infof("OpenGL Version: \"%s\"", fromStringz(glGetString(GL_VERSION)));
-		infof("OpenGL Extensions: \"%s\"", fromStringz(glGetString(GL_EXTENSIONS)));
+//		infof("OpenGL Extensions: \"%s\"", fromStringz(glGetString(GL_EXTENSIONS)));
 		infof("OpenGL GLSL Version: \"%s\"", fromStringz(glGetString(GL_SHADING_LANGUAGE_VERSION)));
 
 		triangle.create();
