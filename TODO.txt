@@ -6,3 +6,20 @@
 
 Optimization:
  - The instancing as to be dynamic just like the batching, because it depends of draw orders (object rendering groups, and sort for alpha objects,...). It will be nice to have a method handler that allow the user to customize this filtering.
+
+ 
+ 
+Use OpenGL ES instead of opengl to get a cleaner API ? OpenGL ES don't have the fixed pipeline.
+Idea :
+ - Starting the support from OpenGL ES 2.0 and GLSL 100
+ - Having some specific optimization (instancing, textures arrays, multiple render target,...) of newest version (OpenGL ES 3.0)
+ - Just need to add few defines (lowp, mediump and highp) in GLSL code when running on an OpenGL system
+
+ 
+Priority :
+ - Draw Triangle with shader
+ - Replace the triangle by a cube
+ - Generate multiple cubes a random positions (make the scene heavy)
+ - Animate cubes
+ - Generate multiple material
+ - Test different optimizations (sort, uniform blocks,...)
