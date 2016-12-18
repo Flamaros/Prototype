@@ -105,6 +105,6 @@ struct ShaderProgram
 		checkgl!glUseProgram(mProgram);
 	}
 
-private:
+package:
 	GLuint	mProgram = 0;
 }

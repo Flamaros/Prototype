@@ -4,6 +4,8 @@ import renderer.opengl.util : checkgl;
 import renderer.opengl.geometry;
 import renderer.opengl.shader;
 
+import gl3n.linalg;
+
 import derelict.opengl3.gl3;
 
 import std.experimental.logger;
@@ -45,11 +47,17 @@ struct Backend
 		program.attachShader(vertexShader);
 		program.attachShader(fragmentShader);
 		program.link();
+
+		colorLocation = glGetUniformLocation(program.mProgram, "uDiffuseColor");
+		color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	}
 
 	void	draw()
 	{
         checkgl!glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		program.use();
+		glUniform4fv(colorLocation, 1, color.value_ptr);
 		triangle.draw();
 	}
 
@@ -61,6 +69,8 @@ package:
 private:
 	Geometry		triangle;
 	ShaderProgram	program;
+	vec4			color;
+	GLint			colorLocation;
 }
 
 version (Windows)
