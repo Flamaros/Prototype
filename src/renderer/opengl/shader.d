@@ -12,7 +12,7 @@ struct Shader
 {
 	void	create()
 	{
-		mGLSLVersion = backend.GLSLVersion;
+		mGLSLVersion = openGLBackend.GLSLVersion;
 	}
 
 	void	load(string filePath, GLenum type)

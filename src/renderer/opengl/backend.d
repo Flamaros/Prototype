@@ -12,7 +12,7 @@ import std.experimental.logger;
 import std.string;
 import std.conv;
 
-static Backend	backend;
+static Backend	openGLBackend;
 
 struct Backend
 {
@@ -29,7 +29,9 @@ struct Backend
 //		infof("OpenGL Extensions: \"%s\"", fromStringz(glGetString(GL_EXTENSIONS)));
 		infof("OpenGL GLSL Version: \"%s\"", GLSLVersion);
 
-		triangle.create();
+		// TODO initialize features flags (VAO available since opengl 3.0)
+
+/*		triangle.create();
 		triangle.set();
 
 		Shader	vertexShader;
@@ -49,35 +51,46 @@ struct Backend
 		program.link();
 
 		colorLocation = glGetUniformLocation(program.mProgram, "uDiffuseColor");
-		color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+		color = vec4(1.0f, 0.0f, 0.0f, 1.0f);*/
 	}
 
 	void	draw()
 	{
         checkgl!glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		program.use();
+/*		program.use();
 		glUniform4fv(colorLocation, 1, color.value_ptr);
-		triangle.draw();
+		triangle.draw();*/
 	}
 
 package:
+	enum	Feature
+	{
+		VOA
+	}
+
 	// TODO clean version string to be usable in shaders,...
 	string	OpenGLVersion;
 	string	GLSLVersion;
 
+	Feature[Feature.max + 1]	features;
+
+
 private:
+	Frame[2]	mFrames;
+}
+
+struct Frame
+{
+package:
+	Group[]	mGroups;
+}
+
+struct Group
+{
+package:
 	Geometry		triangle;
 	ShaderProgram	program;
 	vec4			color;
 	GLint			colorLocation;
-}
-
-version (Windows)
-{
-	string glfw3LibPath = "lib/glfw3.dll";
-}
-else
-{
-	static assert(false); 
 }

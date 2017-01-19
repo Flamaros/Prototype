@@ -1,6 +1,6 @@
 import platform.windows;
 
-import renderer.opengl.backend;
+import renderer.scene;
 
 import derelict.glfw3.glfw3;
 //import core.sys.windows.windows : HWND, HGLRC;
@@ -24,7 +24,7 @@ void main()
         return;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", null, null);
+    window = glfwCreateWindow(800, 600, "Hello World", null, null);
     if (!window)
     {
         glfwTerminate();
@@ -33,15 +33,18 @@ void main()
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
-
 	glfwSwapInterval(0);	// Disable the vsync
 
 	backend.initialize();
 
+	Scene	scene;
+
+	initScene(scene);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-		backend.draw();
+		scene.draw();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -51,4 +54,17 @@ void main()
     }
 
     glfwTerminate();
+}
+
+void	initScene(ref Scene scene)
+{
+}
+
+version (Windows)
+{
+	string glfw3LibPath = "lib/glfw3.dll";
+}
+else
+{
+	static assert(false); 
 }

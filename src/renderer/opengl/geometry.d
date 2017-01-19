@@ -30,7 +30,7 @@ struct Geometry
 		checkgl!glBufferData(GL_ARRAY_BUFFER, data.length * GLfloat.sizeof, data.ptr, GL_STATIC_DRAW);
 	}
 
-	void	draw()
+	void	draw()	// TODO With VOA it is not necessary to bind everything
 	{
 		checkgl!glEnableVertexAttribArray(0);
 		checkgl!glBindBuffer(GL_ARRAY_BUFFER, mBufferId);
