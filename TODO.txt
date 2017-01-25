@@ -23,3 +23,6 @@ Priority :
  - Animate cubes
  - Generate multiple material
  - Test different optimizations (sort, uniform blocks,...)
+
+ 
+Implement an object Factory for Node to avoid gc use.
