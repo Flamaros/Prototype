@@ -13,6 +13,8 @@ void main()
 {
 	version(release) globalLogLevel = LogLevel.trace;
 
+	debug infof("Running in debug");
+
 //	DerelictGLFW3.load(SharedLibVersion(3, 2, 1));
 	DerelictGLFW3.load(glfw3LibPath);
 //	DerelictGLFW3_loadWindows();

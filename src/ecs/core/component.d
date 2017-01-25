@@ -1,5 +1,10 @@
 module ecs.core.component;
 
-class Component
+import ecs.core.node;
+import ecs.core.entity;
+
+class Component : Node
 {
+private:
+	Entity*	mEntity;
 }
