@@ -90,8 +90,10 @@ public:
 	{
 		if (index >= mCount)
 		{
-			assert(false);
-			return;
+			debug
+				assert(false);
+			else
+				return;
 		}
 
 		// Swap the last value to the erased one
