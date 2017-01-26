@@ -8,6 +8,17 @@ import gl3n.linalg;
 
 class Viewport : FrameGraphNode
 {
-	@property
-	AABB2f	normalizedRect = AABB2f(vec2(0.0f, 0.0f), vec2(1.0f, 1.0f));
+public:
+	@property void	normalizedRect(in AABB2f rect) pure @nogc nothrow
+	{
+		mNormalizedRect = rect;
+	}
+
+	@property AABB2f	normalizedRect() const pure @nogc nothrow
+	{
+		return mNormalizedRect;
+	}
+		
+private:
+	AABB2f	mNormalizedRect = AABB2f(vec2(0.0f, 0.0f), vec2(1.0f, 1.0f));
 }

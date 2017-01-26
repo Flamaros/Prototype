@@ -15,23 +15,28 @@ public:
 	@property static immutable int	npos = -1;
 
 public:
-	@nogc
-	this(int count, const ValueType value)
+	this(int count, in ref ValueType value) @nogc nothrow
 	{
 		resize(count, value);
 	}
 
-	@nogc
-	~this()
+	~this() @nogc nothrow
 	{
-		free(mData);
+		clear();
 	}
 
-	@nogc @property bool	isEmpty() const {return mCount == 0;}
-	@nogc @property int		count() const {return mCount;}
+	@property bool	empty() const pure @nogc nothrow
+	{
+		return mCount == 0;
+	}
 
-	@nogc
-	void    reserve(int count)   /// This have no effect if the requested count is inferior to the number of allocated elements
+	@property int	count() const pure @nogc nothrow
+	{
+		return mCount;
+	}
+
+	/// This have no effect if the requested count is inferior to the number of allocated elements
+	void	reserve(int count) @nogc nothrow
 	{
 		if (mAllocated < count)
 		{
@@ -40,15 +45,15 @@ public:
 		}
 	}
 
-	@nogc
-	void    resize(int count) /// Memory isn't initialized, no memory will be released (use shrink if needed)
+	/// Memory isn't initialized, no memory will be released (use shrink if needed)
+	void	resize(int count) @nogc nothrow
 	{
 		reserve(count);
 		mCount = count;
 	}
 
-	@nogc
-	void    resize(int count, const ValueType value) /// it initalize new elements with value
+	/// it initalize new elements with value
+	void	resize(int count, in ref ValueType value) @nogc nothrow
 	{
 		reserve(count);
 		for (int i = mCount; i < mAllocated; i++)
@@ -56,24 +61,27 @@ public:
 		mCount = count;
 	}
 
-	@nogc
-	void    shrink()    /// Reduce the internal buffer size to fit to the number of elements used
+	/// Reduce the internal buffer size to fit to the number of elements used
+	void	shrink() @nogc nothrow
 	{
 		mData = cast(ValueType*)realloc(mData, mCount * ValueType.sizeof);
 		mAllocated = mCount;
 	}
 
-	@nogc
-	void    clear() /// Erase the entire array
+	/// Erase the entire array
+	void	clear() @nogc nothrow
 	{
+		for (int i = 0; i < mCount; i++)
+			mData[i].__dtor();
+
 		free(mData);
 		mData = null;
 		mAllocated = 0;
 		mCount = 0;
 	}
 
-	@nogc
-	void    pushBack(const ValueType value, int reserveChunk = 1)    /// reserveChunk is the reserve size to use if there no enough space for the pushBack
+    /// reserveChunk is the reserve size to use if there no enough space for the pushBack	
+	void    pushBack(in ref ValueType value, int reserveChunk = 1) @nogc nothrow
 	{
 		import std.algorithm.comparison : min;
 
@@ -83,16 +91,14 @@ public:
 		mCount++;
 	}
 
-	@nogc
-	void    pushBack(const Array!(ValueType) values)
+	void    pushBack(in ref Array!(ValueType) values) @nogc nothrow
 	{
 		reserve(mCount + values.mCount);
 		memcpy(&mData[mCount], values.mData, values.mCount * ValueType.sizeof);
 		mCount += values.mCount;
 	}
 
-	@nogc
-	void    removeAt(int index)
+	void    removeAt(int index) @nogc nothrow
 	{
 		if (index >= mCount)
 		{
@@ -102,13 +108,13 @@ public:
 				return;
 		}
 
+		mData[index].__dtor();
 		// Swap the last value to the erased one
 		memcpy(&mData[index], &mData[mCount - 1], ValueType.sizeof);
 		mCount--;
 	}
 
-	@nogc
-	void    removeOne(ValueType value)
+	void    removeOne(ValueType value) @nogc nothrow
 	{
 		int  position = findFirst(value);
 
@@ -116,8 +122,7 @@ public:
 			removeAt(position);
 	}
 
-	@nogc
-	void    removeAll(ValueType value)
+	void    removeAll(ValueType value) @nogc nothrow
 	{
 		int  position = findFirst(value);
 
@@ -128,8 +133,8 @@ public:
 		}
 	}
 
-	@nogc
-	int  findFirst(ValueType Value, int position = 0) /// return npos if not found, else the index
+	/// return npos if not found, else the index
+	int  findFirst(ValueType Value, int position = 0) pure const @nogc nothrow
 	{
 		for (int i = position; i < mCount; i++)
 			if (memcmp(&mData[i], &Value, ValueType.sizeof) == 0)
@@ -137,10 +142,16 @@ public:
 		return npos;
 	}
 
-	/// Return the raw ptr, you can modify data, but take care of calling resize or reserve if needed
-	@nogc @property ValueType*  data() {return mData;}
+	/// Return the raw ptr
+	@property const(ValueType*)	data() const @nogc nothrow
+	{
+		return mData;
+	}
 
-	@nogc ref ValueType	opIndex(int position) {return mData[position];}
+	ref ValueType	opIndex(int position) @nogc nothrow
+	{
+		return mData[position];
+	}
 
 private:
 	ValueType*	mData = null;
@@ -150,4 +161,5 @@ private:
 
 unittest
 {
+	// TODO test with int, int*, struct, struct*, class, class*,... (mainly for destructors)
 }

@@ -4,21 +4,21 @@ import utils.array;
 
 class Node
 {
-	@nogc
-	this(Node parent = null)
+public:
+	static uint	chunkSize = 32;
+
+public:
+	this(Node parent = null) @nogc nothrow
 	{
 		mParent = parent;
 	}
 
-	~this()
+	~this() @nogc nothrow
 	{
 		parent(null);
-		for (int i = 0; i < mChildren.count; i++)
-			delete mChildren[i];
 	}
 
-	@nogc @property Node	parent() {return mParent;}
-	@nogc @property void	parent(Node parent)
+	final @property void	parent(Node parent) @nogc nothrow
 	{
 		if (mParent !is null)
 			mParent.removeChild(this);
@@ -27,19 +27,24 @@ class Node
 			mParent.addChild(this);
 	}
 
-	@nogc
-	@property final ulong id() {return mId;}
-
-private:
-	@nogc
-	void	addChild(Node node)
+	final @property Node	parent() pure @nogc nothrow
 	{
-		if (mChildren.findFirst(node) == mChildren.npos)
-			mChildren.pushBack(node);
+		return mParent;
 	}
 
-	@nogc
-	void	removeChild(Node node)
+	final @property ulong id() @nogc
+	{
+		return mId;
+	}
+
+private:
+	void	addChild(Node node) @nogc nothrow
+	{
+		if (mChildren.findFirst(node) == mChildren.npos)
+			mChildren.pushBack(node, chunkSize);
+	}
+
+	void	removeChild(Node node) @nogc nothrow
 	{
 		mChildren.removeOne(node);
 	}
