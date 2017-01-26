@@ -21,6 +21,12 @@ public:
 		resize(count, value);
 	}
 
+	@nogc
+	~this()
+	{
+		free(mData);
+	}
+
 	@nogc @property bool	isEmpty() const {return mCount == 0;}
 	@nogc @property int		count() const {return mCount;}
 
