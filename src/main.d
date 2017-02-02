@@ -2,12 +2,18 @@ import platform.windows;
 
 import renderer.opengl.backend;
 
+import ecs.core.aspect_engine;
+
+import ecs.render.frame_graph;
+
 import derelict.glfw3.glfw3;
 //import core.sys.windows.windows : HWND, HGLRC;
 //mixin DerelictGLFW3_WindowsBind;
 
 import std.stdio;
 import std.experimental.logger;
+
+FrameGraph	rootFrameGraph;
 
 void main()
 {
@@ -40,9 +46,13 @@ void main()
 
 	backend.initialize();
 
+//	initializeFrameGraph();
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+		rootFrameGraph.execute();
+
 		backend.draw();
 
         /* Swap front and back buffers */
@@ -53,4 +63,22 @@ void main()
     }
 
     glfwTerminate();
+}
+
+void	initializeSceneGraph()
+{
+}
+
+void	initializeFrameGraph()
+{
+	import ecs.render.frame_graph_node;
+	import ecs.render.viewport;
+	import ecs.render.clear_buffer;
+
+	Viewport	viewport;
+	ClearBuffer	clearBuffers = new ClearBuffer(viewport);
+
+	clearBuffers.buffers = ClearBuffer.BufferType.ColorDepthBuffer;
+	clearBuffers.color = Color(1.0, 0.0, 1.0, 1.0);
+	rootFrameGraph.setRoot(viewport);
 }

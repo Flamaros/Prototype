@@ -6,6 +6,7 @@ struct Transform(type, int dimensions)
 {
 	static assert(dimensions == 2 || dimensions == 3);
 
+public:
 	VectorType			position;
 	VectorType			scale;
 	Quaternion!(type)	orientation;

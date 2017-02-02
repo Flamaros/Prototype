@@ -9,6 +9,11 @@ import gl3n.linalg;
 class Viewport : FrameGraphNode
 {
 public:
+	this(FrameGraphNode parent)
+	{
+		super(parent);
+	}
+
 	@property void	normalizedRect(in AABB2f rect) pure @nogc nothrow
 	{
 		mNormalizedRect = rect;
