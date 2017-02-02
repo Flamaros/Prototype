@@ -71,8 +71,9 @@ public:
 	/// Erase the entire array
 	void	clear() @nogc nothrow
 	{
-		for (int i = 0; i < mCount; i++)
-			mData[i].__dtor();
+		static if (__traits(hasMember, ValueType, "__dtor"))
+			for (int i = 0; i < mCount; i++)
+				mData[i].__dtor();
 
 		free(mData);
 		mData = null;
@@ -80,8 +81,8 @@ public:
 		mCount = 0;
 	}
 
-    /// reserveChunk is the reserve size to use if there no enough space for the pushBack	
-	void    pushBack(in ref ValueType value, int reserveChunk = 1) @nogc nothrow
+    /// reserveChunk is the reserve size to use if there no enough space for the pushBack
+	void    pushBack(in ValueType value, int reserveChunk = 1) @nogc nothrow
 	{
 		import std.algorithm.comparison : min;
 
@@ -91,7 +92,7 @@ public:
 		mCount++;
 	}
 
-	void    pushBack(in ref Array!(ValueType) values) @nogc nothrow
+	void    pushBack(in Array!(ValueType) values) @nogc nothrow
 	{
 		reserve(mCount + values.mCount);
 		memcpy(&mData[mCount], values.mData, values.mCount * ValueType.sizeof);
@@ -108,7 +109,8 @@ public:
 				return;
 		}
 
-		mData[index].__dtor();
+		static if (__traits(hasMember, ValueType, "__dtor"))
+			mData[index].__dtor();
 		// Swap the last value to the erased one
 		memcpy(&mData[index], &mData[mCount - 1], ValueType.sizeof);
 		mCount--;
@@ -161,5 +163,32 @@ private:
 
 unittest
 {
-	// TODO test with int, int*, struct, struct*, class, class*,... (mainly for destructors)
+	struct Struct {
+		int	foo;
+	}
+
+	class Class {
+		int	foo;
+	}
+
+	Array!(Struct)	ofStructs;
+	Array!(Class)	ofClasses;
+	Array!(int)		ofInts;
+
+	Struct	s;
+	s.foo = 10;
+
+	Class	c;
+	c.foo = 10;
+
+	int	foo = 10;
+
+	ofStructs.pushBack(s);
+	assert(ofStructs[0].foo == 10);
+
+	ofClasses.pushBack(c);
+	assert(ofClasses[0].foo == 10);
+
+	ofInts.pushBack(10);
+	assert(ofInts[0] == 10);
 }
