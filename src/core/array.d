@@ -178,7 +178,7 @@ unittest
 	Struct	s;
 	s.foo = 10;
 
-	Class	c;
+	Class	c = new Class;
 	c.foo = 10;
 
 	int	foo = 10;
