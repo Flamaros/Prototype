@@ -20,7 +20,7 @@ public:
 	}
 
 public:
-	this(FrameGraphNode parent)
+	this(FrameGraphNode parent = null) @nogc
 	{
 		super(parent);
 	}

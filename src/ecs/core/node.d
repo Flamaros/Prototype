@@ -1,6 +1,6 @@
 module ecs.core.node;
 
-import utils.array;
+import core.array;
 
 class Node
 {

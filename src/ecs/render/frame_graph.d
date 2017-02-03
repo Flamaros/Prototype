@@ -5,6 +5,10 @@ import ecs.render.frame_graph_node;
 class FrameGraph
 {
 public:
+	this() @nogc
+	{
+	}
+
 	void	setRoot(FrameGraphNode rootNode)
 	{
 		mRootNode = rootNode;

@@ -1,4 +1,4 @@
-module utils.disposable;
+module core.disposable;
 
 import core.runtime;
 

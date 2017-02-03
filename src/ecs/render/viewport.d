@@ -9,7 +9,7 @@ import gl3n.linalg;
 class Viewport : FrameGraphNode
 {
 public:
-	this(FrameGraphNode parent)
+	this(FrameGraphNode parent = null) @nogc
 	{
 		super(parent);
 	}

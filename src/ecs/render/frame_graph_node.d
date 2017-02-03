@@ -5,7 +5,7 @@ import ecs.core.node;
 class FrameGraphNode : Node
 {
 public:
-	this(FrameGraphNode parent)
+	this(FrameGraphNode parent = null) @nogc
 	{
 		super(parent);
 	}

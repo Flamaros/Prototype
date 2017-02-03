@@ -1,4 +1,4 @@
-module utils.array;
+module core.array;
 
 import core.stdc.stdlib : realloc, free;
 import core.stdc.string : memcpy, memcmp;

@@ -1,6 +1,7 @@
 import platform.windows;
 
 import renderer.opengl.backend;
+import core.nogc_memory;
 
 import ecs.core.aspect_engine;
 
@@ -51,7 +52,7 @@ void main()
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-		rootFrameGraph.execute();
+//		rootFrameGraph.execute();
 
 		backend.draw();
 
@@ -75,10 +76,12 @@ void	initializeFrameGraph()
 	import ecs.render.viewport;
 	import ecs.render.clear_buffer;
 
-	Viewport	viewport;
-	ClearBuffer	clearBuffers = new ClearBuffer(viewport);
+	Viewport	viewport = nogcNew!Viewport();
+	ClearBuffer	clearBuffers = nogcNew!ClearBuffer(viewport);
 
 	clearBuffers.buffers = ClearBuffer.BufferType.ColorDepthBuffer;
 	clearBuffers.color = Color(1.0, 0.0, 1.0, 1.0);
+
+	rootFrameGraph = nogcNew!FrameGraph();
 	rootFrameGraph.setRoot(viewport);
 }
