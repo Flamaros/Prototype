@@ -3,6 +3,7 @@ module core.nogc_memory;
 T	nogcNew(T, Args...)(Args args) @nogc
 {
 	import core.stdc.stdlib : malloc;
+	import std.traits;
 
 	T	instance;
 
@@ -10,11 +11,13 @@ T	nogcNew(T, Args...)(Args args) @nogc
 // 	instance = T.init;
 	foreach (string member; __traits(allMembers, T))
 	{
-//		static if (__traits(compiles, EnumMembers!(__traits(getMember, type, member))) && is(OriginalType!(__traits(getMember, type, member)) == int)) // If its an int enum
+//		static if (isType!(__traits(getMember, instance, member)))
+//			__traits(getMember, instance, member) = typeof(__traits(getMember, instance, member)).init;
+/*		static if (isType!(mixin("instance." ~ member)))
 		{
-//			mixin instance
-//			.eval(member) = typeof(member).init;
-		}
+			mixin("instance." ~ member)
+				= typeof(mixin("instance." ~ member)).init;
+		}*/
 
 	}
 
