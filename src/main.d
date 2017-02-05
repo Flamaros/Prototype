@@ -72,7 +72,7 @@ void	initializeSceneGraph()
 
 void	initializeFrameGraph()
 {
-	import ecs.render.frame_graph_node;
+/*	import ecs.render.frame_graph_node;
 	import ecs.render.viewport;
 	import ecs.render.clear_buffer;
 
@@ -83,5 +83,5 @@ void	initializeFrameGraph()
 	clearBuffers.color = Color(1.0, 0.0, 1.0, 1.0);
 
 	rootFrameGraph = nogcNew!FrameGraph();
-	rootFrameGraph.setRoot(viewport);
+	rootFrameGraph.setRoot(viewport);*/
 }
