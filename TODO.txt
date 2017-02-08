@@ -26,3 +26,7 @@ Priority :
 
  
 Implement an object Factory for Node to avoid gc use.
+
+Use Harfbuzz for text rendering?
+
+https://github.com/libgdx/libgdx/wiki/Distance-field-fonts
